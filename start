@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+require "fileutils"
+
+server_pid_path = "tmp/pids/server.pid"
+
+if File.exists?(server_pid_path)
+  server_pid = File.read(server_pid_path)
+  Process.kill('QUIT', server_pid) rescue Errno::ESRCH
+  sleep 2
+end
+
+FileUtils.rm_rf([server_pid_path])
+system "bundle exec spring stop"
+system "bundle exec rails server -b 0.0.0.0"

@@ -35,5 +35,7 @@ module RailsNoJs
     # Don't generate system test files.
     config.generators.system_tests = nil
     config.active_job.queue_adapter = :sucker_punch
+
+    config.autoload_paths << Rails.root.join("app/no_js")
   end
 end
