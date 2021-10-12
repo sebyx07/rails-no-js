@@ -6,18 +6,26 @@ module Arbre
       begin
         default_method_missing(name, *args, **options, &block)
       rescue NoMethodError
-        return super unless Object.const_defined?(name)
-        klass = name.to_s.constantize
-        return super unless klass.ancestors.include?(NoJsComponent)
+        return super unless is_snab_class_available?(name.to_s)
 
         self.class.class_eval <<-RUBY
 def #{name}(*args, **options, &block)
-  #{name}.new(*args, **options, &block).render
+  ComponentLoader.new("#{name}").render(*args, **options, &block)
 end
         RUBY
 
-        klass.new(*args, **options, &block).render
+        ComponentLoader.new(name).render(*args, **options, &block)
       end
+    end
+
+    def is_snab_class_available?(name)
+      component_files = Dir.glob(::Rails.root.join("app/assets/javascripts/components/**/*.js.rb")).select { |e| File.file? e }.map do |f_name|
+        f_name.split("/app/assets/javascripts/components/").last.sub(".js.rb", "").split("/").map(&:camelize).join("::")
+      end
+
+      p component_files
+
+      component_files.include?(name)
     end
   end
 end

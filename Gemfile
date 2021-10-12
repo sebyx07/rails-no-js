@@ -45,3 +45,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'arbre', '~> 1.4'
 gem 'sucker_punch', '~> 3.0', '>= 3.0.1'
+gem 'snabberb', '~> 1.5', '>= 1.5.4'
+gem 'opal-rails', '~> 2.0', '>= 2.0.1'
+gem 'opal-jquery'
+

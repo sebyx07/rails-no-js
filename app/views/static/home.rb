@@ -1,5 +1,5 @@
 div do
-  span do
-    ListComponent(1)
-  end
+  SimpleList(props: {
+    elements: ["One", "Two", :Three]
+  })
 end
