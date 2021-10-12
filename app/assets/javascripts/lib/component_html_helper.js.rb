@@ -13,12 +13,15 @@ module ComponentHtmlHelper
 
   HTML5_ELEMENTS = [ :para ] + AUTO_BUILD_ELEMENTS
 
+  private
+
   def method_missing(name, *argv, **options, &block)
     return super unless HTML5_ELEMENTS.include?(name)
 
     value = block_given? ? block.call : argv
     native_value = Native(value)
     improved_options_class(options)
+    improve_events(options)
 
     if !native_value.is_a?(String) && !native_value.is_a?(Array)
       value = [value]
@@ -36,5 +39,30 @@ module ComponentHtmlHelper
     end
 
     options[:class] = result
+  end
+
+  def improve_events(options)
+    return unless options[:on]
+    result = {}
+
+    options[:on].each do |event_name, existing_value|
+      if `typeof existing_value === 'function'`
+        next result[event_name] = existing_value
+      end
+
+      next unless `Array.isArray(existing_value)`
+      the_function = existing_value.find do |val|
+        val.is_a?(Proc)
+      end
+      other_values = existing_value.filter do |val|
+        val != the_function
+      end
+
+      result[event_name] = ->(ev) do
+        the_function.call(ev, *other_values)
+      end
+    end
+
+    options[:on] = result
   end
 end

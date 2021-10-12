@@ -23,8 +23,6 @@ end
         f_name.split("/app/assets/javascripts/components/").last.sub(".js.rb", "").split("/").map(&:camelize).join("::")
       end
 
-      p component_files
-
       component_files.include?(name)
     end
   end
